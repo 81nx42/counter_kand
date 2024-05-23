@@ -1,4 +1,3 @@
-
 kind: Deployment
 apiVersion: apps/v1
 metadata:
@@ -6,9 +5,7 @@ metadata:
   labels:
     app: counter-backend
     app.kubernetes.io/part-of: counter
-
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: counter-backend
@@ -16,28 +13,47 @@ spec:
     metadata:
       labels:
         app: counter-backend
-        app.kubernetes.io/part-of: counter
-
     spec:
       containers:
-      - name: counter-backend  # Name of the container
-        image: 81noah55/counter-backend:v1 # Docker image to use
-        imagepullpolicy: always #set always
-        ports:
-        - containerPort: 8080
-        env:
-          - name: DB_HOST
-            valueFrom:
-              secretKeyRef:
-                name: counter-database
-                key: database-host
-          - name: DB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: counter-database
-                key:  database-password
-          - name: DB_NAME
-            valueFrom:
-              secretKeyRef:
-                name: counter-database
-                key: database-name
+        - name: counter-backend
+          image: 81noah55/counter-backend:v1
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: counter-database
+                  key: database-user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: counter-database
+                  key: database-password
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: counter-database
+                  key: database-name
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: counter-database
+                  key: database-host
+            - name: PASSPHRASE
+              value: secret
+          livenessProbe:
+            httpGet:
+              path: /api/health/secret
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /api/health/secret
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5

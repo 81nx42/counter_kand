@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: counter-frontend
-        image: kirari04/counter:frontend
+        image: 81noah55/counter-frontend:v1
         ports:
         - containerPort: 3000
         livenessProbe:
@@ -33,17 +33,11 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 5
         env:
-        - name: NODE_ENV
-          value: production
-        - name: REACT_APP_VERSION
-          value: 1.0.0
-        - name: REACT_APP_NAME
-          value: Counter
         - name: BACKEND_URL
           valueFrom:
             secretKeyRef:
               name: counter-database
-              key: BACKEND_URL
+              key: backend_url
   strategy:
     type: RollingUpdate
     rollingUpdate:

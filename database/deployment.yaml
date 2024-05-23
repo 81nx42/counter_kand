@@ -3,6 +3,7 @@ apiVersion: apps/v1
 metadata:
   name: counter-database
   labels:
+    app: counter-database
     app.kubernetes.io/part-of: counter
 spec:
   replicas: 1
@@ -14,7 +15,6 @@ spec:
       labels:
         app: counter-database
         app.kubernetes.io/part-of: counter
-
     spec:
       containers:
         - name: counter-database
@@ -38,3 +38,10 @@ spec:
                 secretKeyRef:
                   name: counter-database
                   key: database-name
+          volumeMounts:
+          - name: counter-storage
+            mountPath: /var/lib/pgsql/data
+      volumes:
+      - name: counter-storage
+        persistentVolumeClaim:
+          claimName: counter-database

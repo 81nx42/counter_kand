@@ -3,14 +3,14 @@ kind: Service
 metadata:
   name: counter-database
   labels:
+    app: counter-database
     app.kubernetes.io/part-of: counter
 spec:
   selector:
     app: counter-database  # Selector to identify pods with this label
-    labels:
-    app.kubernetes.io/part-of: counter
   ports:
-    - protocol: TCP
-      port: 8080 # The port that the service will expose
-      targetPort: 8080  # The port on the container
+    - name: 5432-tcp
+      protocol: TCP
+      port: 5432 # The port that the service will expose
+      targetPort: 5432  # The port on the container
   type: ClusterIP
