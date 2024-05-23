@@ -1,0 +1,43 @@
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: counter-backend
+  labels:
+    app: counter-backend
+    app.kubernetes.io/part-of: counter
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: counter-backend
+  template:
+    metadata:
+      labels:
+        app: counter-backend
+        app.kubernetes.io/part-of: counter
+
+    spec:
+      containers:
+      - name: counter-backend  # Name of the container
+        image: 81noah55/counter-backend:v1 # Docker image to use
+        imagepullpolicy: always #set always
+        ports:
+        - containerPort: 8080
+        env:
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: counter-database
+                key: database-host
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: counter-database
+                key:  database-password
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: counter-database
+                key: database-name
